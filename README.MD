@@ -185,9 +185,9 @@ food_delivery_system/
 *View and filter orders by status*
 
 ### SQL Demo
-![SQL Demo Screenshot](Asseta/query1.png)
-![SQL Demo Screenshot](Asseta/query2.png)
-![SQL Demo Screenshot](Asseta/query3.png)
+![SQL Demo Screenshot](Assets/query1.png)
+![SQL Demo Screenshot](Assets/query2.png)
+![SQL Demo Screenshot](Assets/query3.png)
 
 
 *Live execution of SQL queries with results*
