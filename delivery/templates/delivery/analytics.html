@@ -1,0 +1,272 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}Analytics - Food Delivery System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-4"><i class="bi bi-graph-up"></i> Analytics & Reports</h1>
+        <p class="lead">Business insights and statistics</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Orders by Status</h5>
+            </div>
+            <div class="card-body">
+                {% if orders_by_status %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Status</th>
+                                <th>Order Count</th>
+                                <th>Total Revenue</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in orders_by_status %}
+                            <tr>
+                                <td>
+                                    {% if item.status == 'Delivered' %}
+                                        <span class="badge bg-success">{{ item.status }}</span>
+                                    {% elif item.status == 'Cancelled' %}
+                                        <span class="badge bg-danger">{{ item.status }}</span>
+                                    {% elif item.status == 'Pending' %}
+                                        <span class="badge bg-warning">{{ item.status }}</span>
+                                    {% else %}
+                                        <span class="badge bg-info">{{ item.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td><strong>{{ item.count }}</strong></td>
+                                <td>Rs.{{ item.revenue|default:"0.00" }}</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ item.count|floatformat:0 }};" 
+                                             aria-valuenow="{{ item.count }}" aria-valuemin="0" aria-valuemax="100">
+                                            {{ item.count }}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-trophy"></i> Top Restaurants by Revenue</h5>
+            </div>
+            <div class="card-body">
+                {% if top_restaurants %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Restaurant</th>
+                                <th>Orders</th>
+                                <th>Revenue</th>
+                                <th>Avg Order</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for restaurant in top_restaurants %}
+                            <tr>
+                                <td>
+                                    {% if forloop.counter == 1 %}
+                                        <i class="bi bi-trophy-fill text-warning"></i>
+                                    {% elif forloop.counter == 2 %}
+                                        <i class="bi bi-trophy-fill text-secondary"></i>
+                                    {% elif forloop.counter == 3 %}
+                                        <i class="bi bi-trophy-fill" style="color: #cd7f32;"></i>
+                                    {% else %}
+                                        {{ forloop.counter }}
+                                    {% endif %}
+                                </td>
+                                <td><strong>{{ restaurant.name }}</strong><br>
+                                    <small class="text-muted">{{ restaurant.cuisine_type }}</small>
+                                </td>
+                                <td>{{ restaurant.total_orders }}</td>
+                                <td><strong>Rs.{{ restaurant.total_revenue }}</strong></td>
+                                <td>Rs.{{ restaurant.avg_order|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-star-fill"></i> Most Popular Items</h5>
+            </div>
+            <div class="card-body">
+                {% if popular_items %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Item Name</th>
+                                <th>Orders</th>
+                                <th>Qty Sold</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in popular_items %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <strong>{{ item.name }}</strong><br>
+                                    <small class="text-muted">{{ item.category }}</small>
+                                </td>
+                                <td>{{ item.times_ordered }}</td>
+                                <td><strong>{{ item.total_quantity }}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0"><i class="bi bi-truck"></i> Delivery Personnel Performance</h5>
+            </div>
+            <div class="card-body">
+                {% if delivery_stats %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Vehicle</th>
+                                <th>Total Deliveries</th>
+                                <th>Completed</th>
+                                <th>Success Rate</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for person in delivery_stats %}
+                            <tr>
+                                <td><strong>{{ person.name }}</strong></td>
+                                <td>{{ person.vehicle_type }}</td>
+                                <td>{{ person.total_deliveries }}</td>
+                                <td>{{ person.completed }}</td>
+                                <td>
+                                    {% if person.total_deliveries > 0 %}
+                                        {% widthratio person.completed person.total_deliveries 100 %}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if person.is_available %}
+                                        <span class="badge bg-success">Available</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Busy</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2">Total Orders</h6>
+                <h2 class="card-title">
+                    {% if orders_by_status %}
+                        {% widthratio orders_by_status|length 1 1 %}
+                    {% else %}
+                        0
+                    {% endif %}
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2">Top Restaurant</h6>
+                <h5 class="card-title">
+                    {% if top_restaurants %}
+                        {{ top_restaurants.0.name }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2">Popular Item</h6>
+                <h5 class="card-title">
+                    {% if popular_items %}
+                        {{ popular_items.0.name }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2">Active Delivery</h6>
+                <h2 class="card-title">
+                    {% if delivery_stats %}
+                        {{ delivery_stats|length }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </h2>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

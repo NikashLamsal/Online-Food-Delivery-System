@@ -1,0 +1,93 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}Orders - Food Delivery System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-4"><i class="bi bi-cart"></i> Orders</h1>
+        <p class="lead">View and manage all orders</p>
+    </div>
+</div>
+
+<!-- Filter Options -->
+<div class="row mb-3">
+    <div class="col">
+        <div class="btn-group" role="group">
+            <a href="{% url 'delivery:order_list' %}" class="btn btn-outline-primary {% if not status_filter %}active{% endif %}">All</a>
+            <a href="?status=Pending" class="btn btn-outline-warning {% if status_filter == 'Pending' %}active{% endif %}">Pending</a>
+            <a href="?status=Confirmed" class="btn btn-outline-info {% if status_filter == 'Confirmed' %}active{% endif %}">Confirmed</a>
+            <a href="?status=Preparing" class="btn btn-outline-primary {% if status_filter == 'Preparing' %}active{% endif %}">Preparing</a>
+            <a href="?status=Out for Delivery" class="btn btn-outline-secondary {% if status_filter == 'Out for Delivery' %}active{% endif %}">Out for Delivery</a>
+            <a href="?status=Delivered" class="btn btn-outline-success {% if status_filter == 'Delivered' %}active{% endif %}">Delivered</a>
+            <a href="?status=Cancelled" class="btn btn-outline-danger {% if status_filter == 'Cancelled' %}active{% endif %}">Cancelled</a>
+        </div>
+    </div>
+</div>
+
+<!-- Orders Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if orders %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Restaurant</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Delivery Person</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td><strong>#{{ order.order_id }}</strong></td>
+                                <td>{{ order.customer.name }}</td>
+                                <td>{{ order.restaurant.name }}</td>
+                                <td><strong>Rs.{{ order.total_amount }}</strong></td>
+                                <td>
+                                    {% if order.status == 'Delivered' %}
+                                        <span class="badge bg-success">{{ order.status }}</span>
+                                    {% elif order.status == 'Cancelled' %}
+                                        <span class="badge bg-danger">{{ order.status }}</span>
+                                    {% elif order.status == 'Pending' %}
+                                        <span class="badge bg-warning">{{ order.status }}</span>
+                                    {% else %}
+                                        <span class="badge bg-info">{{ order.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if order.delivery_person %}
+                                        {{ order.delivery_person.name }}
+                                    {% else %}
+                                        <span class="text-muted">Not assigned</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ order.order_date|date:"M d, Y H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'delivery:order_detail' order.order_id %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    No orders found{% if status_filter %} with status "{{ status_filter }}"{% endif %}.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

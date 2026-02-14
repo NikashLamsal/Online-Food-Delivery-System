@@ -9,7 +9,7 @@ class Customer(models.Model):
     customer_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
-    Phone = models.CharField(max_length=10)
+    phone = models.CharField(max_length=10)
     address = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 

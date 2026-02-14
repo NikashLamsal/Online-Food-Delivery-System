@@ -1,0 +1,51 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}Restaurants - Food Delivery System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-4"><i class="bi bi-shop"></i> Restaurants</h1>
+        <p class="lead">Browse all available restaurants</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for restaurant in restaurants %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ restaurant.name }}</h5>
+                <small>{{ restaurant.cuisine_type }}</small>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    <i class="bi bi-geo-alt"></i> {{ restaurant.address }}<br>
+                    <i class="bi bi-telephone"></i> {{ restaurant.phone }}<br>
+                    <i class="bi bi-star-fill text-warning"></i> Rating: {{ restaurant.rating }}/5.0
+                </p>
+                <hr>
+                <p class="mb-2"><strong>Statistics:</strong></p>
+                <p class="mb-0">
+                    <small class="text-muted">
+                        Total Orders: {{ restaurant.total_orders|default:"0" }}<br>
+                        Total Revenue: Rs.{{ restaurant.total_revenue|default:"0.00" }}
+                    </small>
+                </p>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'delivery:restaurant_detail' restaurant.restaurant_id %}" class="btn btn-primary btn-sm w-100">
+                    <i class="bi bi-eye"></i> View Menu
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No restaurants found. Please add restaurants via the admin panel.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

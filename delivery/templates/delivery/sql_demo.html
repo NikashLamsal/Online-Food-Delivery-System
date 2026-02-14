@@ -1,0 +1,280 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}SQL Queries Demo - Food Delivery System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-4"><i class="bi bi-code-square"></i> SQL Queries Demonstration</h1>
+        <p class="lead">Live execution of all required SQL queries</p>
+    </div>
+</div>
+
+<!-- INNER JOIN Query -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-1-circle"></i> INNER JOIN Query
+                </h5>
+                <small>Get orders with customer and restaurant details</small>
+            </div>
+            <div class="card-body">
+                <pre class="bg-light p-3 rounded"><code>SELECT 
+    o.order_id,
+    c.name AS customer_name,
+    r.name AS restaurant_name,
+    o.total_amount,
+    o.status
+FROM order_table o
+INNER JOIN customer c ON o.customer_id = c.customer_id
+INNER JOIN restaurant r ON o.restaurant_id = r.restaurant_id
+ORDER BY o.order_date DESC
+LIMIT 10;</code></pre>
+                
+                <h6 class="mt-3">Results:</h6>
+                {% if inner_join_results %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer Name</th>
+                                <th>Restaurant Name</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in inner_join_results %}
+                            <tr>
+                                <td>{{ row.0 }}</td>
+                                <td>{{ row.1 }}</td>
+                                <td>{{ row.2 }}</td>
+                                <td>Rs.{{ row.3 }}</td>
+                                <td>
+                                    {% if row.4 == 'Delivered' %}
+                                        <span class="badge bg-success">{{ row.4 }}</span>
+                                    {% elif row.4 == 'Cancelled' %}
+                                        <span class="badge bg-danger">{{ row.4 }}</span>
+                                    {% else %}
+                                        <span class="badge bg-info">{{ row.4 }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No results found</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LEFT JOIN Query -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-2-circle"></i> LEFT JOIN Query
+                </h5>
+                <small>Get all menu items with order count (even if never ordered)</small>
+            </div>
+            <div class="card-body">
+                <pre class="bg-light p-3 rounded"><code>SELECT 
+    mi.name AS item_name,
+    r.name AS restaurant_name,
+    COUNT(oi.order_item_id) AS times_ordered
+FROM menu_item mi
+LEFT JOIN order_item oi ON mi.item_id = oi.item_id
+LEFT JOIN restaurant r ON mi.restaurant_id = r.restaurant_id
+GROUP BY mi.item_id, mi.name, r.name
+ORDER BY times_ordered DESC
+LIMIT 10;</code></pre>
+                
+                <h6 class="mt-3">Results:</h6>
+                {% if left_join_results %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Restaurant</th>
+                                <th>Times Ordered</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in left_join_results %}
+                            <tr>
+                                <td>{{ row.0 }}</td>
+                                <td>{{ row.1 }}</td>
+                                <td>
+                                    <strong>{{ row.2 }}</strong>
+                                    {% if row.2 == 0 %}
+                                        <span class="badge bg-warning">Never Ordered</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No results found</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AGGREGATE Query (COUNT + GROUP BY) -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-3-circle"></i> AGGREGATE Query (COUNT + GROUP BY)
+                </h5>
+                <small>Count orders by status and calculate total revenue</small>
+            </div>
+            <div class="card-body">
+                <pre class="bg-light p-3 rounded"><code>SELECT 
+    status,
+    COUNT(*) AS order_count,
+    SUM(total_amount) AS total_revenue
+FROM order_table
+GROUP BY status;</code></pre>
+                
+                <h6 class="mt-3">Results:</h6>
+                {% if aggregate_results %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Status</th>
+                                <th>Order Count</th>
+                                <th>Total Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in aggregate_results %}
+                            <tr>
+                                <td>
+                                    {% if row.0 == 'Delivered' %}
+                                        <span class="badge bg-success">{{ row.0 }}</span>
+                                    {% elif row.0 == 'Cancelled' %}
+                                        <span class="badge bg-danger">{{ row.0 }}</span>
+                                    {% elif row.0 == 'Pending' %}
+                                        <span class="badge bg-warning">{{ row.0 }}</span>
+                                    {% else %}
+                                        <span class="badge bg-info">{{ row.0 }}</span>
+                                    {% endif %}
+                                </td>
+                                <td><strong>{{ row.1 }}</strong></td>
+                                <td><strong>Rs.{{ row.2 }}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No results found</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SUB-QUERY -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">
+                    <i class="bi bi-4-circle"></i> SUB-QUERY
+                </h5>
+                <small>Find customers who ordered from restaurants with rating > 4.0</small>
+            </div>
+            <div class="card-body">
+                <pre class="bg-light p-3 rounded"><code>SELECT 
+    c.name AS customer_name,
+    c.email
+FROM customer c
+WHERE c.customer_id IN (
+    SELECT DISTINCT o.customer_id
+    FROM order_table o
+    INNER JOIN restaurant r ON o.restaurant_id = r.restaurant_id
+    WHERE r.rating > 4.0
+)
+LIMIT 10;</code></pre>
+                
+                <h6 class="mt-3">Results:</h6>
+                {% if subquery_results %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in subquery_results %}
+                            <tr>
+                                <td><strong>{{ row.0 }}</strong></td>
+                                <td>{{ row.1 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No results found</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional Info -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Additional Queries</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>This demo shows 4 main query types. The complete project includes:</strong></p>
+                <ul>
+                    <li>✅ <strong>INNER JOIN</strong> - Combining tables with matching records</li>
+                    <li>✅ <strong>LEFT JOIN</strong> - Including all records from left table</li>
+                    <li>✅ <strong>RIGHT JOIN</strong> - Available in SQL_QUERIES.py file</li>
+                    <li>✅ <strong>COUNT + GROUP BY</strong> - Counting records by category</li>
+                    <li>✅ <strong>SUM/AVG</strong> - Calculating totals and averages</li>
+                    <li>✅ <strong>SUB-QUERY</strong> - Nested query for complex filtering</li>
+                    <li>✅ <strong>VIEWS</strong> - Created via MySQL (see SQL_QUERIES.py)</li>
+                    <li>✅ <strong>TRANSACTIONS</strong> - COMMIT/ROLLBACK examples in SQL_QUERIES.py</li>
+                </ul>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-lightbulb"></i> 
+                    <strong>Note:</strong> For complete SQL queries including Views and Transactions, 
+                    check the <code>SQL_QUERIES.py</code> file in your project package.
+                </div>
+                
+                <a href="{% url 'delivery:analytics' %}" class="btn btn-primary">
+                    <i class="bi bi-graph-up"></i> View Analytics Dashboard
+                </a>
+                <a href="/admin/" class="btn btn-secondary">
+                    <i class="bi bi-gear"></i> Open Admin Panel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

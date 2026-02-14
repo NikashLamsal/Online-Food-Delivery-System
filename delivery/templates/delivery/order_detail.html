@@ -1,0 +1,101 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}Order #{{ order.order_id }} - Food Delivery System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'delivery:order_list' %}">Orders</a></li>
+                <li class="breadcrumb-item active">Order #{{ order.order_id }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Order Details #{{ order.order_id }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Customer:</strong><br>{{ order.customer.name }}<br>{{ order.customer.phone }}</p>
+                        <p><strong>Restaurant:</strong><br>{{ order.restaurant.name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Status:</strong><br>
+                            {% if order.status == 'Delivered' %}
+                                <span class="badge bg-success">{{ order.status }}</span>
+                            {% elif order.status == 'Cancelled' %}
+                                <span class="badge bg-danger">{{ order.status }}</span>
+                            {% else %}
+                                <span class="badge bg-info">{{ order.status }}</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>Order Date:</strong><br>{{ order.order_date|date:"F d, Y H:i" }}</p>
+                    </div>
+                </div>
+                <hr>
+                <p><strong>Delivery Address:</strong><br>{{ order.delivery_address }}</p>
+                {% if order.delivery_person %}
+                <p><strong>Delivery Person:</strong><br>{{ order.delivery_person.name }} ({{ order.delivery_person.vehicle_type }})</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Order Items</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order_items %}
+                            <tr>
+                                <td>{{ item.menu_item.name }}</td>
+                                <td>Rs.{{ item.item_price }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td class="text-end">Rs.{{ item.get_subtotal }}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr class="table-light">
+                                <td colspan="3" class="text-end"><strong>Total Amount:</strong></td>
+                                <td class="text-end"><strong>Rs.{{ order.total_amount }}</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Actions</h5>
+            </div>
+            <div class="card-body">
+                <a href="/admin/delivery/order/{{ order.order_id }}/change/" class="btn btn-primary w-100 mb-2">
+                    <i class="bi bi-pencil"></i> Edit Order
+                </a>
+                <a href="{% url 'delivery:order_list' %}" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-arrow-left"></i> Back to Orders
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
