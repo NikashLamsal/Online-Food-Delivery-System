@@ -132,7 +132,6 @@ LIMIT 10;</code></pre>
     </div>
 </div>
 
-<!-- AGGREGATE Query (COUNT + GROUP BY) -->
 <div class="row mb-4">
     <div class="col-12">
         <div class="card">
@@ -251,22 +250,22 @@ LIMIT 10;</code></pre>
             <div class="card-body">
                 <p><strong>This demo shows 4 main query types. The complete project includes:</strong></p>
                 <ul>
-                    <li>✅ <strong>INNER JOIN</strong> - Combining tables with matching records</li>
-                    <li>✅ <strong>LEFT JOIN</strong> - Including all records from left table</li>
-                    <li>✅ <strong>RIGHT JOIN</strong> - Available in SQL_QUERIES.py file</li>
-                    <li>✅ <strong>COUNT + GROUP BY</strong> - Counting records by category</li>
-                    <li>✅ <strong>SUM/AVG</strong> - Calculating totals and averages</li>
-                    <li>✅ <strong>SUB-QUERY</strong> - Nested query for complex filtering</li>
-                    <li>✅ <strong>VIEWS</strong> - Created via MySQL (see SQL_QUERIES.py)</li>
-                    <li>✅ <strong>TRANSACTIONS</strong> - COMMIT/ROLLBACK examples in SQL_QUERIES.py</li>
+                    <li><strong>INNER JOIN</strong> - Combining tables with matching records</li>
+                    <li><strong>LEFT JOIN</strong> - Including all records from left table</li>
+                    <li><strong>RIGHT JOIN</strong> - Available in SQL_QUERIES.py file</li>
+                    <li><strong>COUNT + GROUP BY</strong> - Counting records by category</li>
+                    <li><strong>SUM/AVG</strong> - Calculating totals and averages</li>
+                    <li><strong>SUB-QUERY</strong> - Nested query for complex filtering</li>
+                    <li><strong>VIEWS</strong> - Created via MySQL (see SQL_QUERIES.py)</li>
+                    <li><strong>TRANSACTIONS</strong> - COMMIT/ROLLBACK examples in SQL_QUERIES.py</li>
                 </ul>
-                
+                {% comment %}
                 <div class="alert alert-info mt-3">
                     <i class="bi bi-lightbulb"></i> 
                     <strong>Note:</strong> For complete SQL queries including Views and Transactions, 
                     check the <code>SQL_QUERIES.py</code> file in your project package.
                 </div>
-                
+                {% endcomment %}
                 <a href="{% url 'delivery:analytics' %}" class="btn btn-primary">
                     <i class="bi bi-graph-up"></i> View Analytics Dashboard
                 </a>
