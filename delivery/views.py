@@ -134,12 +134,10 @@ def analytics(request):
 
 
 
-# SQL QUERIES DEMO VIEW
 def sql_queries_demo(request):
 
     with connection.cursor() as cursor:
         
-        # INNER JOIN Query
         cursor.execute("""
             SELECT 
                 o.order_id,
@@ -155,7 +153,6 @@ def sql_queries_demo(request):
         """)
         inner_join_results = cursor.fetchall()
         
-        # LEFT JOIN Query
         cursor.execute("""
             SELECT 
                 mi.name AS item_name,
@@ -169,7 +166,7 @@ def sql_queries_demo(request):
             LIMIT 10
         """)
         left_join_results = cursor.fetchall()
-        
+
         cursor.execute("""
             SELECT 
                 status,
@@ -205,9 +202,7 @@ def sql_queries_demo(request):
 
 
 def api_restaurant_menu(request, restaurant_id):
-    """
-    API endpoint to get restaurant menu items as JSON
-    """
+
     menu_items = MenuItem.objects.filter(
         restaurant_id=restaurant_id,
         is_available=True
@@ -220,9 +215,7 @@ def api_restaurant_menu(request, restaurant_id):
 
 
 def api_order_status(request, order_id):
-    """
-    API endpoint to check order status
-    """
+
     try:
         order = Order.objects.select_related('delivery_person').get(order_id=order_id)
         return JsonResponse({
