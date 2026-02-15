@@ -1,10 +1,3 @@
-"""
-Management command to populate database with sample data
-Place this file at: delivery/management/commands/populate_data.py
-
-Run: python manage.py populate_data
-"""
-
 from django.core.management.base import BaseCommand
 from delivery.models import Customer, Restaurant, MenuItem, DeliveryPersonnel, Order, OrderItem
 from decimal import Decimal
